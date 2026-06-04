@@ -486,7 +486,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="ic-input">No. Kad Pengenalan Pelajar</label>
-                    <input type="text" id="ic-input" placeholder="Contoh: 090512135567" autocomplete="off">
+                    <input type="text" id="ic-input" placeholder="Contoh: 09051213XXXX" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="tingkatan-select">Tingkatan</label>
@@ -588,7 +588,7 @@
                                 <div class="result-label">Analisis Keputusan</div>
                                 <div class="result-val" id="res-analisis">-</div>
                             </div>
-                            <div class="note-italic">(Catatan: Pendidikan Jasmani & Pendidikan Kesihatan tidak diambilkira.)</div>
+                            <div class="note-italic">(Catatan: Pendidikan Jasmani & Pendidikan Kesihatan tidak diambil kira.)</div>
                         </div>
                     </div>
 
@@ -741,7 +741,7 @@
                     let foundRecord = null;
                     let totalPelajarTingkatan = 0;
                     
-                    // Loop pertama: Cari profil pelajar & jumlah keseluruhan dalam tingkatan
+                    // Cari profil pelajar & kira jumlah keseluruhan pelajar dalam tingkatan
                     for (let i = 0; i < rows.length; i++) {
                         const currentRow = rows[i];
                         if (currentRow.length > 2) {
@@ -757,27 +757,10 @@
                         }
                     }
 
-                    // Loop kedua: Kira pelajar dalam kelas yang sama
-                    let totalPelajarKelas = 0;
-                    if (foundRecord) {
-                        const targetClass = String(foundRecord[colLetterToIndex('D')]).trim().toUpperCase();
-                        for (let i = 0; i < rows.length; i++) {
-                            const currentRow = rows[i];
-                            if (currentRow.length > colLetterToIndex('D')) {
-                                const rowIC = String(currentRow[1]).trim().replace(/[^0-9]/g, '');
-                                const rowClass = String(currentRow[colLetterToIndex('D')]).trim().toUpperCase();
-                                
-                                if (rowIC.length > 5 && rowClass === targetClass) {
-                                    totalPelajarKelas++;
-                                }
-                            }
-                        }
-                    }
-
                     loader.style.display = 'none';
 
                     if (foundRecord) {
-                        populateAndShowResult(foundRecord, tingkatan, totalPelajarTingkatan, totalPelajarKelas);
+                        populateAndShowResult(foundRecord, tingkatan, totalPelajarTingkatan);
                     } else {
                         showAlert('Rekod tidak ditemui. Sila pastikan No. Kad Pengenalan dan Tingkatan adalah betul.');
                     }
@@ -796,7 +779,7 @@
             alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function populateAndShowResult(record, tingkatan, totalTingkatan, totalKelas) {
+        function populateAndShowResult(record, tingkatan, totalTingkatan) {
             const nameVal = record[colLetterToIndex('C')];
             const classVal = record[colLetterToIndex('D')];
             const icVal = record[colLetterToIndex('B')];
@@ -848,16 +831,16 @@
             document.getElementById('res-gp').textContent = record[colLetterToIndex(sumConfig.gp)] || '-';
             document.getElementById('res-keputusan').textContent = record[colLetterToIndex(sumConfig.keputusan)] || '-';
             
-            // Papar Kedudukan Kelas
+            // Papar Kedudukan Kelas secara terus (Direct dari Sheet 'TEMP')
             const kedKelas = record[colLetterToIndex(sumConfig.kelasKed)];
             const kedKelasStr = kedKelas ? String(kedKelas).trim() : '';
             if (kedKelasStr !== '' && kedKelasStr !== '-' && kedKelasStr.toUpperCase() !== 'NULL') {
-                document.getElementById('res-ked-kelas').textContent = kedKelasStr + ' / ' + totalKelas;
+                document.getElementById('res-ked-kelas').textContent = kedKelasStr;
             } else {
                 document.getElementById('res-ked-kelas').textContent = '-';
             }
 
-            // Papar Kedudukan Tingkatan
+            // Papar Kedudukan Tingkatan beserta jumlah pelajar
             const kedTing = record[colLetterToIndex(sumConfig.tingkKed)];
             const kedTingStr = kedTing ? String(kedTing).trim() : '';
             if (kedTingStr !== '' && kedTingStr !== '-' && kedTingStr.toUpperCase() !== 'NULL') {
