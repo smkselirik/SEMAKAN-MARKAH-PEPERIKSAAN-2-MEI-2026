@@ -1,4 +1,4 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
@@ -856,12 +856,3 @@ html_content = """<!DOCTYPE html>
     </script>
 </body>
 </html>
-"""
-
-# Fixing a tiny variable typo in subjectsList initialization mapping inside the JS block strings
-html_content = html_content.replace("subjects45", "subjectsT45")
-
-with open("portal_semakan_smk_selirik_2026.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print("Portal HTML file generated successfully!")
