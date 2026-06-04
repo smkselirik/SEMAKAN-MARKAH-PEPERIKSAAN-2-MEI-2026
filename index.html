@@ -201,11 +201,6 @@
             border-left: 4px solid #ef4444;
             color: #991b1b;
         }
-        .alert-info {
-            background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
-            color: #166534;
-        }
         .loading {
             text-align: center;
             padding: 20px;
@@ -491,7 +486,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="ic-input">No. Kad Pengenalan Pelajar</label>
-                    <input type="text" id="ic-input" placeholder="Contoh: 09051313xxxx" autocomplete="off">
+                    <input type="text" id="ic-input" placeholder="Contoh: 090512135567" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="tingkatan-select">Tingkatan</label>
@@ -556,7 +551,7 @@
                             </tr>
                         </thead>
                         <tbody id="marks-body">
-                            </tbody>
+                        </tbody>
                     </table>
 
                     <h2 class="summary-section-title">Rumusan Keseluruhan</h2>
@@ -621,7 +616,6 @@
     </footer>
 
     <script>
-        // Data URLs Definition Configuration Mapping
         const dataUrls = {
             'T1': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR_cVUYiV59wBBM78IF0OeqL90DIeQXksU-sqQRnMF0Ou6_AFUSmyrf4mIvtZw5M2ROix6tooZwBp2m/pub?gid=1419213935&single=true&output=csv',
             'T2': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT52bai_YQO69Xj44RZ774cYQxkcAVSI32loOIrmSxl94gWaQA3zmuhjM24cvGQP4tin618SFxlhGmG/pub?gid=1419213935&single=true&output=csv',
@@ -630,7 +624,6 @@
             'T5': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhqsBRMjA8LPYWT1V301p2vYO-8tVEbv1RSkSOyixoS-48cQpfUZTozkHqJgBSjUfBUIE7SgUMc2-K/pub?gid=1615224868&single=true&output=csv'
         };
 
-        // Utility: Convert Spreadsheet Column Letter Code to Zero-Based Numeric Array Index Location
         function colLetterToIndex(colStr) {
             let index = 0;
             for (let i = 0; i < colStr.length; i++) {
@@ -639,7 +632,6 @@
             return index - 1;
         }
 
-        // Schema Rules Matrix Configuration Mappings
         const subjectsT123 = [
             { name: "BAHASA MELAYU", mCol: "E", gCol: "F" },
             { name: "ENGLISH LANGUAGE", mCol: "G", gCol: "H" },
@@ -682,7 +674,6 @@
             'T45': { jumlah: 'CA', purata: 'CB', gp: 'CC', analisis: 'CF', keputusan: 'CD', kelasKed: 'CE', tingkKed: 'CW', ulasan: 'CV' }
         };
 
-        // Custom RFC-Compliant Native Javascript CSV Parser
         function parseCSVText(text) {
             let lines = [];
             let row = [""];
@@ -713,7 +704,6 @@
             return lines;
         }
 
-        // Action Trigger Handler Bindings
         document.getElementById('search-btn').addEventListener('click', performSearchLookup);
         document.getElementById('ic-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') performSearchLookup();
@@ -726,7 +716,6 @@
             const loader = document.getElementById('loading-indicator');
             const resultDiv = document.getElementById('result-container');
 
-            // Hide previous lookups
             alertBox.style.display = 'none';
             resultDiv.style.display = 'none';
 
@@ -740,7 +729,6 @@
             }
 
             loader.style.display = 'block';
-
             const dataUrl = dataUrls[tingkatan];
 
             fetch(dataUrl)
@@ -751,16 +739,37 @@
                 .then(csvData => {
                     const rows = parseCSVText(csvData);
                     let foundRecord = null;
-
-                    // Match logic using formatted data columns matrix
-                    // Col B -> Index 1 (IC Number check matching)
+                    let totalPelajarTingkatan = 0;
+                    
+                    // Loop pertama: Cari profil pelajar & jumlah keseluruhan dalam tingkatan
                     for (let i = 0; i < rows.length; i++) {
                         const currentRow = rows[i];
-                        if (currentRow.length > 1) {
+                        if (currentRow.length > 2) {
                             const rowIC = String(currentRow[1]).trim().replace(/[^0-9]/g, '');
-                            if (rowIC === icInput && rowIC !== '') {
-                                foundRecord = currentRow;
-                                break;
+                            
+                            // Andaian: Baris pelajar yang sah mempunyai IC > 5 digit
+                            if (rowIC.length > 5) {
+                                totalPelajarTingkatan++;
+                                if (rowIC === icInput) {
+                                    foundRecord = currentRow;
+                                }
+                            }
+                        }
+                    }
+
+                    // Loop kedua: Kira pelajar dalam kelas yang sama
+                    let totalPelajarKelas = 0;
+                    if (foundRecord) {
+                        const targetClass = String(foundRecord[colLetterToIndex('D')]).trim().toUpperCase();
+                        for (let i = 0; i < rows.length; i++) {
+                            const currentRow = rows[i];
+                            if (currentRow.length > colLetterToIndex('D')) {
+                                const rowIC = String(currentRow[1]).trim().replace(/[^0-9]/g, '');
+                                const rowClass = String(currentRow[colLetterToIndex('D')]).trim().toUpperCase();
+                                
+                                if (rowIC.length > 5 && rowClass === targetClass) {
+                                    totalPelajarKelas++;
+                                }
                             }
                         }
                     }
@@ -768,7 +777,7 @@
                     loader.style.display = 'none';
 
                     if (foundRecord) {
-                        populateAndShowResult(foundRecord, tingkatan);
+                        populateAndShowResult(foundRecord, tingkatan, totalPelajarTingkatan, totalPelajarKelas);
                     } else {
                         showAlert('Rekod tidak ditemui. Sila pastikan No. Kad Pengenalan dan Tingkatan adalah betul.');
                     }
@@ -787,8 +796,7 @@
             alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function populateAndShowResult(record, tingkatan) {
-            // Bio profiles mapping indices
+        function populateAndShowResult(record, tingkatan, totalTingkatan, totalKelas) {
             const nameVal = record[colLetterToIndex('C')];
             const classVal = record[colLetterToIndex('D')];
             const icVal = record[colLetterToIndex('B')];
@@ -798,13 +806,11 @@
             document.getElementById('lbl-tingkatan').textContent = 'TINGKATAN ' + tingkatan.substring(1);
             document.getElementById('lbl-kelas').textContent = classVal || '-';
 
-            // Select subject matrix type structure schema blueprint mapping
             const isSenior = (tingkatan === 'T4' || tingkatan === 'T5');
-            const subjectsList = isSenior ? subjects45 : subjectsT123;
+            const subjectsList = isSenior ? subjectsT45 : subjectsT123;
             const summaryKey = isSenior ? 'T45' : 'T13';
             const sumConfig = summaryCols[summaryKey];
 
-            // Filter out empty rows and append items inside document
             const tbody = document.getElementById('marks-body');
             tbody.innerHTML = '';
 
@@ -815,7 +821,6 @@
                 const markStr = markRaw ? String(markRaw).trim() : '';
                 const gradeStr = gradeRaw ? String(gradeRaw).trim() : '';
 
-                // Condition validation check to omit "NULL" or blank records
                 if (markStr !== '' && markStr.toUpperCase() !== 'NULL' && markStr !== '-') {
                     const row = document.createElement('tr');
                     
@@ -838,17 +843,32 @@
                 }
             });
 
-            // Map and update summary block container fields
             document.getElementById('res-jumlah').textContent = record[colLetterToIndex(sumConfig.jumlah)] || '-';
             document.getElementById('res-purata').textContent = record[colLetterToIndex(sumConfig.purata)] || '-';
             document.getElementById('res-gp').textContent = record[colLetterToIndex(sumConfig.gp)] || '-';
             document.getElementById('res-keputusan').textContent = record[colLetterToIndex(sumConfig.keputusan)] || '-';
-            document.getElementById('res-ked-kelas').textContent = record[colLetterToIndex(sumConfig.kelasKed)] || '-';
-            document.getElementById('res-ked-tingk').textContent = record[colLetterToIndex(sumConfig.tingkKed)] || '-';
+            
+            // Papar Kedudukan Kelas
+            const kedKelas = record[colLetterToIndex(sumConfig.kelasKed)];
+            const kedKelasStr = kedKelas ? String(kedKelas).trim() : '';
+            if (kedKelasStr !== '' && kedKelasStr !== '-' && kedKelasStr.toUpperCase() !== 'NULL') {
+                document.getElementById('res-ked-kelas').textContent = kedKelasStr + ' / ' + totalKelas;
+            } else {
+                document.getElementById('res-ked-kelas').textContent = '-';
+            }
+
+            // Papar Kedudukan Tingkatan
+            const kedTing = record[colLetterToIndex(sumConfig.tingkKed)];
+            const kedTingStr = kedTing ? String(kedTing).trim() : '';
+            if (kedTingStr !== '' && kedTingStr !== '-' && kedTingStr.toUpperCase() !== 'NULL') {
+                document.getElementById('res-ked-tingk').textContent = kedTingStr + ' / ' + totalTingkatan;
+            } else {
+                document.getElementById('res-ked-tingk').textContent = '-';
+            }
+
             document.getElementById('res-analisis').textContent = record[colLetterToIndex(sumConfig.analisis)] || '-';
             document.getElementById('res-ulasan').textContent = record[colLetterToIndex(sumConfig.ulasan)] || '-';
 
-            // Display results container view seamlessly
             const resultDiv = document.getElementById('result-container');
             resultDiv.style.display = 'block';
             resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
