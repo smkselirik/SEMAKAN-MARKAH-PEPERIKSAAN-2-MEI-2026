@@ -1,0 +1,867 @@
+html_content = """<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Semakan Markah Penilaian Sumatif 2 (Mei) 2026 - SMK Selirik</title>
+    <style>
+        /* Global & Reset Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 50%, #bae6fd 100%);
+            background-attachment: fixed;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+
+        /* Portal Header Styling */
+        .portal-header {
+            background-color: #051223;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(5, 18, 35, 0.9) 0%, rgba(15, 32, 67, 0.95) 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid #0ea5e9;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+        .portal-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03) 50%, transparent);
+            transform: skewX(-30deg);
+            animation: shine 8s infinite linear;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-150%) skewX(-30deg); }
+            100% { transform: translateX(150%) skewX(-30deg); }
+        }
+        .logo-container {
+            margin-bottom: 15px;
+        }
+        .logo-container img {
+            max-height: 100px;
+            width: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        .school-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #f8fafc;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+        .year-badge {
+            display: inline-block;
+            background-color: #0ea5e9;
+            color: #ffffff;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(14, 165, 233, 0.3);
+        }
+        .portal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Container */
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Card Panels */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-card {
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        /* Form Controls */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s ease;
+            color: #1e293b;
+            background-color: #ffffff;
+        }
+        input:focus, select:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0ea5e9;
+            color: #ffffff;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.3);
+        }
+        .btn:hover {
+            background-color: #0284c7;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -2px rgba(14, 165, 233, 0.4);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+        .btn-secondary {
+            background-color: #475569;
+            box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.3);
+            margin-top: 20px;
+        }
+        .btn-secondary:hover {
+            background-color: #334155;
+            box-shadow: 0 6px 12px -2px rgba(71, 85, 105, 0.4);
+        }
+
+        /* Status & Alert Boxes */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+        .alert-error {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            color: #991b1b;
+        }
+        .alert-info {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            color: #166534;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+            color: #475569;
+            font-weight: 600;
+        }
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #0ea5e9;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Result Container (Slip) */
+        #result-container {
+            display: none;
+        }
+        .slip-document {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .slip-banner {
+            width: 100%;
+            display: block;
+            border-bottom: 3px solid #051223;
+        }
+        .slip-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .slip-body {
+            padding: 35px;
+        }
+        
+        /* Profile Details Table */
+        .student-info-table {
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+        }
+        .student-info-table td {
+            padding: 6px 10px;
+            vertical-align: top;
+            font-size: 15px;
+        }
+        .student-info-table td.label {
+            font-weight: 700;
+            color: #475569;
+            width: 25%;
+        }
+        .student-info-table td.colon {
+            width: 3%;
+            text-align: center;
+            color: #475569;
+        }
+        .student-info-table td.value {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        /* Academic Marks Table */
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .marks-table th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 2px solid #cbd5e1;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .marks-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+            color: #334155;
+        }
+        .marks-table tr:hover td {
+            background-color: #f8fafc;
+        }
+        .text-center {
+            text-align: center !important;
+        }
+        .fw-bold {
+            font-weight: 700;
+        }
+
+        /* Summary Panel Layout */
+        .summary-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 4px solid #0ea5e9;
+            padding-left: 10px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 600px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .summary-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .summary-box .s-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .summary-box .s-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        .result-details-box {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            font-weight: 600;
+            color: #475569;
+        }
+        .result-val {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .note-italic {
+            font-style: italic;
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .ulasan-box {
+            background-color: #fafafa;
+            border-left: 4px solid #475569;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        .ulasan-title {
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 5px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .ulasan-text {
+            color: #1e293b;
+            font-style: italic;
+        }
+
+        .slip-footer-note {
+            text-align: center;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 20px;
+            margin-top: 20px;
+            font-style: italic;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Footer Style */
+        .portal-footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            border-top: 1px solid #1e293b;
+            margin-top: auto;
+        }
+
+        /* Print Media Setup */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                min-height: auto;
+            }
+            .portal-header, .search-card, .btn, .portal-footer, .alert, .loading, .no-print {
+                display: none !important;
+            }
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+            .slip-document {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                page-break-inside: avoid;
+            }
+            .slip-body {
+                padding: 20px 0 !important;
+            }
+            .marks-table th {
+                background-color: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .summary-box {
+                background-color: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .result-details-box {
+                background-color: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="portal-header">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/VYSKMXf1/Logo-Selirik.png" alt="Logo SMK Selirik">
+        </div>
+        <div class="school-name">SMK SELIRIK, KAPIT</div>
+        <div class="year-badge">Tahun 2026</div>
+        <h1 class="portal-title">Portal Semakan Markah Penilaian Sumatif 2 (Mei)</h1>
+    </header>
+
+    <main class="main-content">
+        
+        <div class="card search-card no-print">
+            <div class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Semakan Keputusan Pelajar
+            </div>
+            
+            <div id="alert-box" class="alert alert-error"></div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ic-input">No. Kad Pengenalan Pelajar</label>
+                    <input type="text" id="ic-input" placeholder="Contoh: 09051313xxxx" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="tingkatan-select">Tingkatan</label>
+                    <select id="tingkatan-select">
+                        <option value="">-- Sila Pilih Tingkatan --</option>
+                        <option value="T1">Tingkatan 1</option>
+                        <option value="T2">Tingkatan 2</option>
+                        <option value="T3">Tingkatan 3</option>
+                        <option value="T4">Tingkatan 4</option>
+                        <option value="T5">Tingkatan 5</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="button" class="btn" id="search-btn">
+                <span>Semak Keputusan</span>
+            </button>
+        </div>
+
+        <div id="loading-indicator" class="loading">
+            <div class="spinner"></div>
+            <p>Memuat turun dan memproses data keputusan...</p>
+        </div>
+
+        <div id="result-container">
+            <div class="slip-document">
+                <div class="slip-banner">
+                    <img src="https://i.ibb.co/670hn3CB/smk-selirik.png" alt="Header Rasmi SMK Selirik">
+                </div>
+                
+                <div class="slip-body">
+                    <table class="student-info-table">
+                        <tr>
+                            <td class="label">Nama Pelajar</td>
+                            <td class="colon">:</td>
+                            <td class="value" id="lbl-nama">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">No. Kad Pengenalan</td>
+                            <td class="colon">:</td>
+                            <td class="value" id="lbl-ic">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Tingkatan</td>
+                            <td class="colon">:</td>
+                            <td class="value" id="lbl-tingkatan">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Kelas</td>
+                            <td class="colon">:</td>
+                            <td class="value" id="lbl-kelas">-</td>
+                        </tr>
+                    </table>
+
+                    <h2 class="summary-section-title">Pencapaian Mata Pelajaran</h2>
+                    <table class="marks-table" id="table-marks">
+                        <thead>
+                            <tr>
+                                <th>Mata Pelajaran</th>
+                                <th style="width: 20%;" class="text-center">Markah</th>
+                                <th style="width: 20%;" class="text-center">Gred</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marks-body">
+                            </tbody>
+                    </table>
+
+                    <h2 class="summary-section-title">Rumusan Keseluruhan</h2>
+                    <div class="summary-grid">
+                        <div class="summary-box">
+                            <div class="s-label">Jumlah Markah</div>
+                            <div class="s-value" id="res-jumlah">-</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="s-label">Purata Markah</div>
+                            <div class="s-value" id="res-purata">-</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="s-label">Gred Purata (GP)</div>
+                            <div class="s-value" id="res-gp">-</div>
+                        </div>
+                    </div>
+
+                    <div class="result-details-box">
+                        <div class="result-row">
+                            <div class="result-label">Keputusan Keseluruhan</div>
+                            <div class="result-val" id="res-keputusan">-</div>
+                        </div>
+                        <div class="result-row">
+                            <div class="result-label">Kedudukan Dalam Kelas</div>
+                            <div class="result-val" id="res-ked-kelas">-</div>
+                        </div>
+                        <div class="result-row">
+                            <div class="result-label">Kedudukan Dalam Tingkatan</div>
+                            <div class="result-val" id="res-ked-tingk">-</div>
+                        </div>
+                        <div class="result-row" style="border-bottom: none; flex-direction: column; gap: 4px; align-items: flex-start;">
+                            <div style="display:flex; justify-content:space-between; width:100%;">
+                                <div class="result-label">Analisis Keputusan</div>
+                                <div class="result-val" id="res-analisis">-</div>
+                            </div>
+                            <div class="note-italic">(Catatan: Pendidikan Jasmani & Pendidikan Kesihatan tidak diambilkira.)</div>
+                        </div>
+                    </div>
+
+                    <div class="ulasan-box">
+                        <div class="ulasan-title">Ulasan Guru Kelas</div>
+                        <div class="ulasan-text" id="res-ulasan">-</div>
+                    </div>
+
+                    <div class="slip-footer-note">
+                        Slip ini adalah cetakan komputer. Tandatangan tidak diperlukan.
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary no-print" onclick="window.print()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                Cetak / Simpan Slip Keputusan
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="portal-footer no-print">
+        Hakcipta NDJE@Selirik, Kapit 2026 &copy; Semua Hak Terpelihara.
+    </footer>
+
+    <script>
+        // Data URLs Definition Configuration Mapping
+        const dataUrls = {
+            'T1': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR_cVUYiV59wBBM78IF0OeqL90DIeQXksU-sqQRnMF0Ou6_AFUSmyrf4mIvtZw5M2ROix6tooZwBp2m/pub?gid=1419213935&single=true&output=csv',
+            'T2': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT52bai_YQO69Xj44RZ774cYQxkcAVSI32loOIrmSxl94gWaQA3zmuhjM24cvGQP4tin618SFxlhGmG/pub?gid=1419213935&single=true&output=csv',
+            'T3': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLkEtjpu5SZcccaXkOlDMHHIsfPhIVNh4zlZmJgyRe93ND0Qk07YpzmE8GHuNzALyX7J1Rj2ye1NO5/pub?gid=1419213935&single=true&output=csv',
+            'T4': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQNF2kkoq_gq_9UFRWFWLosn8lQtbDf6bcP_zeSyEYwB_sQLSFGVZUdPRSq-ff6Nbx6Fgo3KbqM1MNW/pub?gid=1615224868&single=true&output=csv',
+            'T5': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhqsBRMjA8LPYWT1V301p2vYO-8tVEbv1RSkSOyixoS-48cQpfUZTozkHqJgBSjUfBUIE7SgUMc2-K/pub?gid=1615224868&single=true&output=csv'
+        };
+
+        // Utility: Convert Spreadsheet Column Letter Code to Zero-Based Numeric Array Index Location
+        function colLetterToIndex(colStr) {
+            let index = 0;
+            for (let i = 0; i < colStr.length; i++) {
+                index = index * 26 + (colStr.charCodeAt(i) - 64);
+            }
+            return index - 1;
+        }
+
+        // Schema Rules Matrix Configuration Mappings
+        const subjectsT123 = [
+            { name: "BAHASA MELAYU", mCol: "E", gCol: "F" },
+            { name: "ENGLISH LANGUAGE", mCol: "G", gCol: "H" },
+            { name: "MATEMATIK", mCol: "I", gCol: "J" },
+            { name: "SEJARAH", mCol: "K", gCol: "L" },
+            { name: "SAINS", mCol: "M", gCol: "N" },
+            { name: "GEOGRAFI", mCol: "O", gCol: "P" },
+            { name: "BAHASA IBAN", mCol: "Q", gCol: "R" },
+            { name: "PENDIDIKAN MORAL", mCol: "S", gCol: "T" },
+            { name: "PENDIDIKAN ISLAM", mCol: "U", gCol: "V" },
+            { name: "REKA BENTUK & TEKNOLOGI", mCol: "W", gCol: "X" },
+            { name: "ASAS SAINS KOMPUTER", mCol: "Y", gCol: "Z" },
+            { name: "PENDIDIKAN SENI VISUAL", mCol: "AA", gCol: "AB" },
+            { name: "PENDIDIKAN JASAMANI & PENDIDIKAN KESIHATAN", mCol: "AO", gCol: "AP" }
+        ];
+
+        const subjectsT45 = [
+            { name: "BAHASA MELAYU", mCol: "E", gCol: "F" },
+            { name: "SEJARAH", mCol: "G", gCol: "H" },
+            { name: "ENGLISH LANGUAGE", mCol: "I", gCol: "J" },
+            { name: "MATEMATIK/MATHEMATICS", mCol: "K", gCol: "L" },
+            { name: "PENDIDIKAN MORAL", mCol: "M", gCol: "N" },
+            { name: "PENDIDIKAN ISLAM", mCol: "O", gCol: "P" },
+            { name: "SAINS", mCol: "Q", gCol: "R" },
+            { name: "PENDIDIKAN SENI VISUAL", mCol: "S", gCol: "T" },
+            { name: "BAHASA IBAN", mCol: "U", gCol: "V" },
+            { name: "REKA CIPTA", mCol: "W", gCol: "X" },
+            { name: "PENGAJIAN PENIAGAAN", mCol: "Y", gCol: "Z" },
+            { name: "PHYSICS", mCol: "AA", gCol: "AB" },
+            { name: "CHEMISTRY", mCol: "AC", gCol: "AD" },
+            { name: "BIOLOGY", mCol: "AE", gCol: "AF" },
+            { name: "ADDITIONAL MATHEMATICS", mCol: "AG", gCol: "AH" },
+            { name: "SAINS KOMPUTER", mCol: "AI", gCol: "AJ" },
+            { name: "KIMPALAN ARKA & GAS", mCol: "AK", gCol: "AL" },
+            { name: "PENDIDIKAN JASMANI & PENDIDIKAN KESIHATAN", mCol: "BK", gCol: "BL" }
+        ];
+
+        const summaryCols = {
+            'T13': { jumlah: 'BC', purata: 'BD', gp: 'BE', analisis: 'BH', keputusan: 'BF', kelasKed: 'BG', tingkKed: 'BR', ulasan: 'BI' },
+            'T45': { jumlah: 'CA', purata: 'CB', gp: 'CC', analisis: 'CF', keputusan: 'CD', kelasKed: 'CE', tingkKed: 'CW', ulasan: 'CV' }
+        };
+
+        // Custom RFC-Compliant Native Javascript CSV Parser
+        function parseCSVText(text) {
+            let lines = [];
+            let row = [""];
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let c = text[i];
+                let next = text[i+1];
+                if (c === '"') {
+                    if (inQuotes && next === '"') {
+                        row[row.length - 1] += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (c === ',' && !inQuotes) {
+                    row.push("");
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && next === '\n') { i++; }
+                    lines.push(row);
+                    row = [""];
+                } else {
+                    row[row.length - 1] += c;
+                }
+            }
+            if (row.length > 1 || row[0] !== "") {
+                lines.push(row);
+            }
+            return lines;
+        }
+
+        // Action Trigger Handler Bindings
+        document.getElementById('search-btn').addEventListener('click', performSearchLookup);
+        document.getElementById('ic-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearchLookup();
+        });
+
+        function performSearchLookup() {
+            const icInput = document.getElementById('ic-input').value.trim().replace(/[^0-9]/g, '');
+            const tingkatan = document.getElementById('tingkatan-select').value;
+            const alertBox = document.getElementById('alert-box');
+            const loader = document.getElementById('loading-indicator');
+            const resultDiv = document.getElementById('result-container');
+
+            // Hide previous lookups
+            alertBox.style.display = 'none';
+            resultDiv.style.display = 'none';
+
+            if (!icInput) {
+                showAlert('Sila masukkan No. Kad Pengenalan pelajar.');
+                return;
+            }
+            if (!tingkatan) {
+                showAlert('Sila pilih tingkatan pelajar.');
+                return;
+            }
+
+            loader.style.display = 'block';
+
+            const dataUrl = dataUrls[tingkatan];
+
+            fetch(dataUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Kegagalan rangkaian pelayan sistem.');
+                    return response.text();
+                })
+                .then(csvData => {
+                    const rows = parseCSVText(csvData);
+                    let foundRecord = null;
+
+                    // Match logic using formatted data columns matrix
+                    // Col B -> Index 1 (IC Number check matching)
+                    for (let i = 0; i < rows.length; i++) {
+                        const currentRow = rows[i];
+                        if (currentRow.length > 1) {
+                            const rowIC = String(currentRow[1]).trim().replace(/[^0-9]/g, '');
+                            if (rowIC === icInput && rowIC !== '') {
+                                foundRecord = currentRow;
+                                break;
+                            }
+                        }
+                    }
+
+                    loader.style.display = 'none';
+
+                    if (foundRecord) {
+                        populateAndShowResult(foundRecord, tingkatan);
+                    } else {
+                        showAlert('Rekod tidak ditemui. Sila pastikan No. Kad Pengenalan dan Tingkatan adalah betul.');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    loader.style.display = 'none';
+                    showAlert('Gagal memuat turun data dari pelayan awan. Sila cuba sekali lagi.');
+                });
+        }
+
+        function showAlert(msg) {
+            const alertBox = document.getElementById('alert-box');
+            alertBox.textContent = msg;
+            alertBox.style.display = 'block';
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function populateAndShowResult(record, tingkatan) {
+            // Bio profiles mapping indices
+            const nameVal = record[colLetterToIndex('C')];
+            const classVal = record[colLetterToIndex('D')];
+            const icVal = record[colLetterToIndex('B')];
+
+            document.getElementById('lbl-nama').textContent = nameVal || '-';
+            document.getElementById('lbl-ic').textContent = icVal || '-';
+            document.getElementById('lbl-tingkatan').textContent = 'TINGKATAN ' + tingkatan.substring(1);
+            document.getElementById('lbl-kelas').textContent = classVal || '-';
+
+            // Select subject matrix type structure schema blueprint mapping
+            const isSenior = (tingkatan === 'T4' || tingkatan === 'T5');
+            const subjectsList = isSenior ? subjects45 : subjectsT123;
+            const summaryKey = isSenior ? 'T45' : 'T13';
+            const sumConfig = summaryCols[summaryKey];
+
+            // Filter out empty rows and append items inside document
+            const tbody = document.getElementById('marks-body');
+            tbody.innerHTML = '';
+
+            subjectsList.forEach(sub => {
+                const markRaw = record[colLetterToIndex(sub.mCol)];
+                const gradeRaw = record[colLetterToIndex(sub.gCol)];
+                
+                const markStr = markRaw ? String(markRaw).trim() : '';
+                const gradeStr = gradeRaw ? String(gradeRaw).trim() : '';
+
+                // Condition validation check to omit "NULL" or blank records
+                if (markStr !== '' && markStr.toUpperCase() !== 'NULL' && markStr !== '-') {
+                    const row = document.createElement('tr');
+                    
+                    const tdName = document.createElement('td');
+                    tdName.textContent = sub.name;
+                    tdName.className = 'fw-bold';
+                    
+                    const tdMark = document.createElement('td');
+                    tdMark.textContent = markStr;
+                    tdMark.className = 'text-center';
+                    
+                    const tdGrade = document.createElement('td');
+                    tdGrade.textContent = gradeStr || '-';
+                    tdGrade.className = 'text-center fw-bold';
+
+                    row.appendChild(tdName);
+                    row.appendChild(tdMark);
+                    row.appendChild(tdGrade);
+                    tbody.appendChild(row);
+                }
+            });
+
+            // Map and update summary block container fields
+            document.getElementById('res-jumlah').textContent = record[colLetterToIndex(sumConfig.jumlah)] || '-';
+            document.getElementById('res-purata').textContent = record[colLetterToIndex(sumConfig.purata)] || '-';
+            document.getElementById('res-gp').textContent = record[colLetterToIndex(sumConfig.gp)] || '-';
+            document.getElementById('res-keputusan').textContent = record[colLetterToIndex(sumConfig.keputusan)] || '-';
+            document.getElementById('res-ked-kelas').textContent = record[colLetterToIndex(sumConfig.kelasKed)] || '-';
+            document.getElementById('res-ked-tingk').textContent = record[colLetterToIndex(sumConfig.tingkKed)] || '-';
+            document.getElementById('res-analisis').textContent = record[colLetterToIndex(sumConfig.analisis)] || '-';
+            document.getElementById('res-ulasan').textContent = record[colLetterToIndex(sumConfig.ulasan)] || '-';
+
+            // Display results container view seamlessly
+            const resultDiv = document.getElementById('result-container');
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
+"""
+
+# Fixing a tiny variable typo in subjectsList initialization mapping inside the JS block strings
+html_content = html_content.replace("subjects45", "subjectsT45")
+
+with open("portal_semakan_smk_selirik_2026.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Portal HTML file generated successfully!")
